@@ -1,0 +1,125 @@
+{
+  "courses": {
+    "machineLearning": {
+      "topic": "Machine Learning Fundamentals",
+      "level": "beginner",
+      "duration": "1-month",
+      "language": "english"
+    },
+    "nlp": {
+      "topic": "Natural Language Processing",
+      "level": "intermediate",
+      "duration": "2-weeks",
+      "language": "english"
+    },
+    "computerVision": {
+      "topic": "Computer Vision",
+      "level": "advanced",
+      "duration": "3-months",
+      "language": "english"
+    },
+    "deepLearning": {
+      "topic": "Deep Learning",
+      "level": "intermediate",
+      "duration": "self-paced",
+      "language": "japanese"
+    }
+  },
+  "mockResponses": {
+    "generatedCourse": {
+      "title": "Machine Learning Fundamentals: A Comprehensive Guide",
+      "description": "Master the fundamentals of machine learning through hands-on projects and real-world applications.",
+      "modules": [
+        {
+          "title": "Introduction to Machine Learning",
+          "lessons": [
+            "What is Machine Learning?",
+            "Types of Machine Learning",
+            "Setting up your environment",
+            "Python basics for ML"
+          ]
+        },
+        {
+          "title": "Supervised Learning",
+          "lessons": [
+            "Linear Regression",
+            "Logistic Regression",
+            "Decision Trees",
+            "Model Evaluation"
+          ]
+        },
+        {
+          "title": "Unsupervised Learning",
+          "lessons": [
+            "Clustering Algorithms",
+            "K-Means Clustering",
+            "Principal Component Analysis",
+            "Dimensionality Reduction"
+          ]
+        },
+        {
+          "title": "Neural Networks Basics",
+          "lessons": [
+            "Introduction to Neural Networks",
+            "Backpropagation",
+            "Activation Functions",
+            "Building your first neural network"
+          ]
+        },
+        {
+          "title": "Practical Applications",
+          "lessons": [
+            "Image Classification",
+            "Text Analysis",
+            "Recommendation Systems",
+            "Real-world Projects"
+          ]
+        },
+        {
+          "title": "Best Practices and Next Steps",
+          "lessons": [
+            "Model Optimization",
+            "Hyperparameter Tuning",
+            "Production Deployment",
+            "Advanced Topics"
+          ]
+        }
+      ],
+      "estimatedHours": 48
+    }
+  },
+  "validationMessages": {
+    "emptyTopic": "Please enter a course topic",
+    "noLevel": "Please select a difficulty level",
+    "noDuration": "Please select a course duration"
+  },
+  "selectors": {
+    "form": {
+      "topicInput": "input[name='topic']",
+      "levelSelect": "select[name='level']",
+      "durationSelect": "select[name='duration']",
+      "languageSelect": "select[name='language']",
+      "submitButton": "button[type='submit']"
+    },
+    "hero": {
+      "title": "h1",
+      "description": "p",
+      "ctaButton": "button"
+    },
+    "results": {
+      "courseTitle": "h2, h3",
+      "courseDescription": "p",
+      "modules": "[class*='border-l']",
+      "estimatedHours": "text=/\\d+h/",
+      "startLearningButton": "button:has-text('Start Learning')",
+      "downloadButton": "button:has-text('Download PDF')"
+    },
+    "error": {
+      "alert": "[role='alert']"
+    },
+    "loading": {
+      "spinner": "[class*='animate-spin']",
+      "loadingText": "text=/Generating/i"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - heading "Learn AI, Your Way" [level=1] [ref=e8]:
+        - text: Learn AI,
+        - text: Your Way
+      - paragraph [ref=e9]: Generate personalized AI learning courses tailored to your goals, experience level, and schedule. Powered by Claude AI, creating the perfect learning path for you.
+      - button "Start Learning" [ref=e11]
+    - main [ref=e12]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - heading "Create Your Course" [level=3] [ref=e16]
+          - paragraph [ref=e17]: Fill in your preferences to generate a customized learning course
+        - generic [ref=e19]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: Course Topic
+            - textbox "Course Topic" [ref=e24]:
+              - /placeholder: e.g., Machine Learning, Natural Language Processing, Computer Vision
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - generic [ref=e27]: Difficulty Level
+              - generic [ref=e28]:
+                - combobox "Difficulty Level" [ref=e29] [cursor=pointer]:
+                  - option "Select your level" [disabled]
+                  - option "Beginner" [selected]
+                  - option "Intermediate"
+                  - option "Advanced"
+                - generic:
+                  - img
+            - generic [ref=e30]:
+              - generic [ref=e31]: Course Duration
+              - generic [ref=e32]:
+                - combobox "Course Duration" [ref=e33] [cursor=pointer]:
+                  - option "Select duration" [disabled]
+                  - option "1 Week"
+                  - option "2 Weeks"
+                  - option "1 Month" [selected]
+                  - option "3 Months"
+                  - option "Self-Paced"
+                - generic:
+                  - img
+          - generic [ref=e35]:
+            - generic [ref=e36]: Language
+            - generic [ref=e37]:
+              - combobox "Language" [ref=e38] [cursor=pointer]:
+                - option "English" [selected]
+                - option "日本語"
+                - option "Español"
+                - option "Français"
+                - option "中文"
+              - generic:
+                - img
+          - alert [ref=e39]: Please enter a course topic
+          - button "Generate Course" [active] [ref=e41]
+      - paragraph [ref=e43]: Fill in the form above to generate your personalized course
+  - button "Open Next.js Dev Tools" [ref=e49] [cursor=pointer]:
+    - img [ref=e50]
+  - alert [ref=e53]
+```

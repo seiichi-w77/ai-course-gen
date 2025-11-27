@@ -1,3 +1,8 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+import React from 'react';
+
 // Button
 export { Button, type ButtonProps } from './Button';
 
@@ -39,3 +44,22 @@ export {
   type BadgeProps,
   type BadgeGroupProps,
 } from './Badge';
+
+// VideoPlayer - Lazy loaded for better performance
+export const VideoPlayer = dynamic(
+  () => import('./VideoPlayer').then((mod) => mod.VideoPlayer),
+  {
+    ssr: false,
+    loading: () => React.createElement('div', { className: 'flex justify-center items-center p-8' }, 'Loading...'),
+  }
+);
+export type { VideoPlayerProps } from './VideoPlayer';
+
+// Loading
+export { Loading, type LoadingProps } from './Loading';
+
+// Grid
+export { Grid, type GridProps } from './Grid';
+
+// Flex
+export { Flex, type FlexProps } from './Flex';

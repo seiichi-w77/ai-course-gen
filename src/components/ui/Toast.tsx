@@ -125,20 +125,22 @@ export const Toast = ({
         'shadow-lg border border-opacity-20 border-white',
         toastColors[type]
       )}
-      role="status"
-      aria-live="polite"
+      role={type === 'error' ? 'alert' : 'status'}
+      aria-live={type === 'error' ? 'assertive' : 'polite'}
+      aria-atomic="true"
     >
-      <div className="flex-shrink-0 mt-0.5">{toastIcons[type]}</div>
+      <div className="flex-shrink-0 mt-0.5" aria-hidden="true">{toastIcons[type]}</div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-sm">{title}</p>
+        <p className="font-medium text-sm" id={`toast-title-${id}`}>{title}</p>
         {description && (
-          <p className="text-xs opacity-90 mt-1">{description}</p>
+          <p className="text-xs opacity-90 mt-1" id={`toast-description-${id}`}>{description}</p>
         )}
       </div>
 
       {action && (
         <button
+          type="button"
           onClick={() => {
             action.onClick();
             handleClose();
@@ -147,22 +149,25 @@ export const Toast = ({
             'flex-shrink-0 text-xs font-medium px-2 py-1',
             'hover:bg-white hover:bg-opacity-20',
             'transition-colors duration-[var(--transition-fast)]',
-            'rounded-[var(--radius-sm)]'
+            'rounded-[var(--radius-sm)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1'
           )}
+          aria-label={`${action.label} - ${title}`}
         >
           {action.label}
         </button>
       )}
 
       <button
+        type="button"
         onClick={handleClose}
         className={cn(
           'flex-shrink-0 hover:bg-white hover:bg-opacity-20',
           'transition-colors duration-[var(--transition-fast)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1',
           'rounded-[var(--radius-sm)] p-1'
         )}
-        aria-label="Close notification"
+        aria-label={`Close notification: ${title}`}
       >
         <svg
           width="16"
@@ -211,8 +216,10 @@ export const ToastContainer = ({
   return (
     <div
       className={cn('fixed z-50 flex flex-col gap-3 pointer-events-none', positionClasses[position])}
-      aria-live="assertive"
-      aria-atomic="true"
+      aria-live="polite"
+      aria-relevant="additions removals"
+      role="region"
+      aria-label="Notifications"
     >
       <AnimatePresence>
         {toasts.map((toast) => (

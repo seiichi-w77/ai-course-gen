@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - heading "Learn AI, Your Way" [level=1] [ref=e5]:
+      - text: Learn AI,
+      - text: Your Way
+    - paragraph [ref=e6]: Generate personalized AI learning courses tailored to your goals, experience level, and schedule. Powered by Claude AI, creating the perfect learning path for you.
+    - button "Start Learning" [ref=e8]
+  - main [ref=e9]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - heading "Create Your Course" [level=3] [ref=e13]
+        - paragraph [ref=e14]: Fill in your preferences to generate a customized learning course
+      - generic [ref=e16]:
+        - generic [ref=e18]:
+          - text: Course Topic
+          - textbox "Course Topic" [ref=e20]:
+            - /placeholder: e.g., Machine Learning, Natural Language Processing, Computer Vision
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - text: Difficulty Level
+            - generic [ref=e23]:
+              - combobox "Difficulty Level" [ref=e24]:
+                - option "Select your level" [disabled] [selected]
+                - option "Beginner"
+                - option "Intermediate"
+                - option "Advanced"
+              - img [ref=e26]
+          - generic [ref=e28]:
+            - text: Course Duration
+            - generic [ref=e29]:
+              - combobox "Course Duration" [ref=e30]:
+                - option "Select duration" [disabled] [selected]
+                - option "1 Week"
+                - option "2 Weeks"
+                - option "1 Month"
+                - option "3 Months"
+                - option "Self-Paced"
+              - img [ref=e32]
+        - generic [ref=e35]:
+          - text: Language
+          - generic [ref=e36]:
+            - combobox "Language" [ref=e37]:
+              - option "English" [selected]
+              - option "日本語"
+              - option "Español"
+              - option "Français"
+              - option "中文"
+            - img [ref=e39]
+        - button "Generate Course" [ref=e42]
+    - paragraph [ref=e44]: Fill in the form above to generate your personalized course
+```

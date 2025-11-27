@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamMessage } from '@/lib/claude';
 import { CourseGenerationRequest, GeneratedCourse } from '@/types/course';
+import { createRateLimiter, getClientIP } from '@/lib/rate-limit';
+import { withRetry, API_RETRY_CONFIG } from '@/lib/retry';
+import {
+  ValidationError,
+  APIError,
+  normalizeError,
+  isAppError,
+} from '@/lib/error';
+import { generateCoursePrompt } from '@/lib/prompts';
+
+/**
+ * Rate limiter: 10 requests per 15 minutes per IP
+ */
+const rateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+});
 
 /**
  * POST /api/generate
@@ -10,68 +27,52 @@ import { CourseGenerationRequest, GeneratedCourse } from '@/types/course';
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body: CourseGenerationRequest = await request.json();
+    // Apply rate limiting
+    const clientIP = getClientIP(request.headers);
+    const rateLimitResult = rateLimiter(clientIP);
+
+    // Validate request body
+    let body: CourseGenerationRequest;
+    try {
+      body = await request.json();
+    } catch {
+      throw new ValidationError('Invalid JSON in request body');
+    }
 
     // Validate required fields
-    if (!body.topic || !body.level || !body.numModules) {
-      return NextResponse.json(
-        {
-          error: 'Missing required fields: topic, level, numModules',
-        },
-        { status: 400 }
-      );
+    const missingFields: Record<string, string> = {};
+    if (!body.topic) missingFields.topic = 'Topic is required';
+    if (!body.level) missingFields.level = 'Level is required';
+    if (!body.numModules) missingFields.numModules = 'Number of modules is required';
+
+    if (Object.keys(missingFields).length > 0) {
+      throw new ValidationError('Missing required fields: topic, level, numModules', missingFields);
     }
 
-    // Create system prompt for course generation
-    const systemPrompt = `You are an expert course curriculum designer. Generate a comprehensive ${body.level} level course on "${body.topic}".
-
-The course should:
-- Be structured with ${body.numModules} modules
-- Each module should contain 2-3 lessons
-- Each lesson should have clear learning objectives, content, and exercises
-- Include practical examples and real-world applications
-- Be educational yet engaging
-
-${body.focusAreas ? `Focus areas: ${body.focusAreas.join(', ')}` : ''}
-${body.objectives ? `Additional objectives: ${body.objectives.join(', ')}` : ''}
-
-Return ONLY valid JSON (no markdown, no additional text) with the following structure:
-{
-  "id": "course_id",
-  "title": "Course Title",
-  "description": "Course description",
-  "topic": "${body.topic}",
-  "level": "${body.level}",
-  "objectives": ["objective1", "objective2"],
-  "modules": [
-    {
-      "id": "module_id",
-      "title": "Module Title",
-      "description": "Module description",
-      "keyConcepts": ["concept1", "concept2"],
-      "lessons": [
-        {
-          "id": "lesson_id",
-          "title": "Lesson Title",
-          "duration": 45,
-          "objectives": ["objective1"],
-          "content": "Lesson content...",
-          "exercises": [
-            {
-              "id": "exercise_id",
-              "description": "Exercise description",
-              "difficulty": "medium",
-              "solution": "Solution hint"
-            }
-          ]
-        }
-      ],
-      "totalDuration": 135
+    // Validate field values
+    if (body.numModules < 1 || body.numModules > 20) {
+      throw new ValidationError('Number of modules must be between 1 and 20');
     }
-  ],
-  "totalDuration": 540,
-  "estimatedHours": 9
-}`;
+
+    const validLevels = ['beginner', 'intermediate', 'advanced'];
+    if (!validLevels.includes(body.level)) {
+      throw new ValidationError(`Level must be one of: ${validLevels.join(', ')}`);
+    }
+
+    // Generate optimized prompts using the new prompt system
+    // Default to English, but could be made configurable
+    const language = 'en'; // Could be extracted from request headers or body
+
+    const prompts = generateCoursePrompt({
+      topic: body.topic,
+      level: body.level,
+      language,
+      numModules: body.numModules,
+      focusAreas: body.focusAreas,
+      objectives: body.objectives,
+    });
+
+    const systemPrompt = prompts.systemPrompt;
 
     // Use streaming for real-time response
     let accumulatedText = '';
@@ -81,26 +82,45 @@ Return ONLY valid JSON (no markdown, no additional text) with the following stru
       new ReadableStream({
         async start(controller) {
           try {
-            // Stream the response from Claude
-            for await (const chunk of streamMessage(
-              [
-                {
-                  role: 'user',
-                  content: `Generate a complete ${body.level} level course on ${body.topic}.`,
-                },
-              ],
-              systemPrompt
-            )) {
-              accumulatedText += chunk;
+            // Stream the response from Claude with retry logic
+            const streamWithRetry = async () => {
+              for await (const chunk of streamMessage(
+                [
+                  {
+                    role: 'user',
+                    content: prompts.userPrompt,
+                  },
+                ],
+                systemPrompt
+              )) {
+                accumulatedText += chunk;
 
-              // Send each chunk as a Server-Sent Event
-              const event = `data: ${JSON.stringify({
-                type: 'stream',
-                content: chunk,
-              })}\n\n`;
+                // Send each chunk as a Server-Sent Event
+                const event = `data: ${JSON.stringify({
+                  type: 'stream',
+                  content: chunk,
+                })}\n\n`;
 
-              controller.enqueue(encoder.encode(event));
-            }
+                controller.enqueue(encoder.encode(event));
+              }
+            };
+
+            // Execute streaming with retry on transient failures
+            await withRetry(streamWithRetry, {
+              ...API_RETRY_CONFIG,
+              onRetry: (error, attempt, delay) => {
+                console.warn(
+                  `[API] Retry attempt ${attempt} after ${delay}ms due to: ${error.message}`
+                );
+                // Send retry notification to client
+                const retryEvent = `data: ${JSON.stringify({
+                  type: 'retry',
+                  attempt,
+                  message: 'Retrying request...',
+                })}\n\n`;
+                controller.enqueue(encoder.encode(retryEvent));
+              },
+            });
 
             // Try to parse and validate the complete course JSON
             try {
@@ -113,7 +133,7 @@ Return ONLY valid JSON (no markdown, no additional text) with the following stru
               })}\n\n`;
 
               controller.enqueue(encoder.encode(completeEvent));
-            } catch (parseError) {
+            } catch {
               // Send error event if JSON parsing fails
               const errorEvent = `data: ${JSON.stringify({
                 type: 'error',
@@ -126,12 +146,19 @@ Return ONLY valid JSON (no markdown, no additional text) with the following stru
 
             controller.close();
           } catch (error) {
-            const errorMessage =
-              error instanceof Error ? error.message : 'Unknown error';
+            // Convert to APIError if it's not already an AppError
+            const appError = isAppError(error)
+              ? error
+              : new APIError(
+                  error instanceof Error ? error.message : 'Unknown error occurred',
+                  'Claude API'
+                );
+
+            const normalized = normalizeError(appError);
 
             const errorEvent = `data: ${JSON.stringify({
               type: 'error',
-              message: `Stream error: ${errorMessage}`,
+              ...normalized,
             })}\n\n`;
 
             controller.enqueue(encoder.encode(errorEvent));
@@ -144,18 +171,30 @@ Return ONLY valid JSON (no markdown, no additional text) with the following stru
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
+          'X-RateLimit-Limit': '10',
+          'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+          'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString(),
         },
       }
     );
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
+    // Unified error handling
+    const normalized = normalizeError(error);
+
+    // Log error for monitoring
+    console.error('[API Error]', {
+      ...normalized,
+      ip: getClientIP(request.headers),
+      timestamp: new Date().toISOString(),
+    });
 
     return NextResponse.json(
       {
-        error: `Failed to generate course: ${errorMessage}`,
+        error: normalized.message,
+        code: normalized.code,
+        ...(process.env.NODE_ENV === 'development' && { details: normalized.details }),
       },
-      { status: 500 }
+      { status: normalized.statusCode }
     );
   }
 }

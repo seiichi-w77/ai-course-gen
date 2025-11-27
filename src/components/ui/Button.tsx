@@ -10,6 +10,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  'aria-label'?: string;
+  'aria-describedby'?: string;
 }
 
 const buttonVariants = {
@@ -37,6 +39,8 @@ const LoadingSpinner = () => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
+    aria-hidden="true"
+    role="presentation"
   >
     <circle
       className="opacity-25"
@@ -65,6 +69,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       disabled,
       children,
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedBy,
       ...props
     },
     ref
@@ -74,6 +80,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <motion.button
         ref={ref}
+        type={props.type || 'button'}
         className={cn(
           'inline-flex items-center justify-center font-medium rounded-[var(--radius-lg)] transition-all duration-[var(--transition-fast)]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2',
@@ -83,18 +90,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           className
         )}
         disabled={isDisabled}
+        aria-disabled={isDisabled}
+        aria-busy={isLoading}
+        aria-label={ariaLabel || (isLoading ? 'Loading...' : undefined)}
+        aria-describedby={ariaDescribedBy}
         whileHover={!isDisabled ? { scale: 1.02 } : undefined}
         whileTap={!isDisabled ? { scale: 0.98 } : undefined}
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         {...(props as HTMLMotionProps<'button'>)}
       >
         {isLoading ? (
-          <LoadingSpinner />
+          <>
+            <LoadingSpinner />
+            <span className="sr-only">Loading...</span>
+          </>
         ) : (
           <>
-            {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
+            {leftIcon && <span className="flex-shrink-0" aria-hidden="true">{leftIcon}</span>}
             {children}
-            {rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}
+            {rightIcon && <span className="flex-shrink-0" aria-hidden="true">{rightIcon}</span>}
           </>
         )}
       </motion.button>

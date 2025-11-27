@@ -105,10 +105,25 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await fetch('/api/generate-course', {
+      // Convert duration to number of modules
+      const durationToModules: Record<string, number> = {
+        '1-week': 2,
+        '2-weeks': 4,
+        '1-month': 6,
+        '3-months': 12,
+        'self-paced': 8,
+      };
+
+      const requestBody = {
+        topic: formData.topic,
+        level: formData.level,
+        numModules: durationToModules[formData.duration] || 4,
+      };
+
+      const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {

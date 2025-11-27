@@ -92,3 +92,62 @@ export interface GeneratedCourse {
   /** Estimated time to complete course (in hours) */
   estimatedHours?: number;
 }
+
+/**
+ * Script Generation Request
+ * Contains parameters for AI-powered lesson script generation
+ */
+export interface ScriptGenerationRequest {
+  /** Unique lesson identifier */
+  lessonId: string;
+  /** Lesson title */
+  lessonTitle: string;
+  /** Lesson content to convert into a script */
+  lessonContent: string;
+  /** Target language for the script */
+  language: string;
+  /** Script duration in minutes */
+  duration: number;
+  /** Script presentation style */
+  style: 'formal' | 'casual' | 'educational';
+}
+
+/**
+ * Generated lesson script
+ */
+export interface GeneratedScript {
+  /** Reference to the lesson ID */
+  lessonId: string;
+  /** Script title */
+  title: string;
+  /** Script language */
+  language: string;
+  /** Script duration in minutes */
+  duration: number;
+  /** Presentation style */
+  style: 'formal' | 'casual' | 'educational';
+  /** Array of script sections */
+  sections: ScriptSection[];
+  /** Total estimated reading time in minutes */
+  estimatedReadingTime: number;
+  /** Word count */
+  wordCount: number;
+}
+
+/**
+ * Individual section of the script
+ */
+export interface ScriptSection {
+  /** Section identifier */
+  id: string;
+  /** Section type (intro, main, conclusion, etc.) */
+  type: 'introduction' | 'main_content' | 'example' | 'summary' | 'conclusion';
+  /** Section title */
+  title: string;
+  /** Script text for this section */
+  content: string;
+  /** Estimated reading time for this section in seconds */
+  estimatedTime: number;
+  /** Optional speaker notes or instructions */
+  speakerNotes?: string;
+}

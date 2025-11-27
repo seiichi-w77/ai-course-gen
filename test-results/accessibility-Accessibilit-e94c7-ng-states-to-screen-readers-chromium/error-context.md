@@ -1,0 +1,172 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - heading "Learn AI, Your Way" [level=1] [ref=e8]:
+        - text: Learn AI,
+        - text: Your Way
+      - paragraph [ref=e9]: Generate personalized AI learning courses tailored to your goals, experience level, and schedule. Powered by Claude AI, creating the perfect learning path for you.
+      - button "Start Learning" [ref=e11]
+    - main [ref=e12]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - heading "Create Your Course" [level=3] [ref=e16]
+          - paragraph [ref=e17]: Fill in your preferences to generate a customized learning course
+        - generic [ref=e19]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: Course Topic
+            - textbox "Course Topic" [ref=e24]:
+              - /placeholder: e.g., Machine Learning, Natural Language Processing, Computer Vision
+              - text: Machine Learning Fundamentals
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - generic [ref=e27]: Difficulty Level
+              - generic [ref=e28]:
+                - combobox "Difficulty Level" [ref=e29] [cursor=pointer]:
+                  - option "Select your level" [disabled]
+                  - option "Beginner" [selected]
+                  - option "Intermediate"
+                  - option "Advanced"
+                - generic:
+                  - img
+            - generic [ref=e30]:
+              - generic [ref=e31]: Course Duration
+              - generic [ref=e32]:
+                - combobox "Course Duration" [ref=e33] [cursor=pointer]:
+                  - option "Select duration" [disabled]
+                  - option "1 Week"
+                  - option "2 Weeks"
+                  - option "1 Month" [selected]
+                  - option "3 Months"
+                  - option "Self-Paced"
+                - generic:
+                  - img
+          - generic [ref=e35]:
+            - generic [ref=e36]: Language
+            - generic [ref=e37]:
+              - combobox "Language" [ref=e38] [cursor=pointer]:
+                - option "English" [selected]
+                - option "日本語"
+                - option "Español"
+                - option "Français"
+                - option "中文"
+              - generic:
+                - img
+          - button "Generate Course" [ref=e40]
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - 'heading "Machine Learning Fundamentals: A Comprehensive Guide" [level=3] [ref=e44]'
+          - paragraph [ref=e45]: Master the fundamentals of machine learning through hands-on projects and real-world applications.
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - generic [ref=e50]: 48h
+              - generic [ref=e51]:
+                - paragraph [ref=e52]: Estimated Time
+                - paragraph [ref=e53]: 48 hours
+            - generic [ref=e54]:
+              - generic [ref=e56]: "6"
+              - generic [ref=e57]:
+                - paragraph [ref=e58]: Modules
+                - paragraph [ref=e59]: 6 modules
+          - generic [ref=e60]:
+            - heading "Course Structure" [level=3] [ref=e61]
+            - generic [ref=e62]:
+              - 'heading "Module 1: Introduction to Machine Learning" [level=4] [ref=e63]'
+              - list [ref=e64]:
+                - listitem [ref=e65]:
+                  - generic [ref=e66]: ✓
+                  - generic [ref=e67]: What is Machine Learning?
+                - listitem [ref=e68]:
+                  - generic [ref=e69]: ✓
+                  - generic [ref=e70]: Types of Machine Learning
+                - listitem [ref=e71]:
+                  - generic [ref=e72]: ✓
+                  - generic [ref=e73]: Setting up your environment
+                - listitem [ref=e74]:
+                  - generic [ref=e75]: ✓
+                  - generic [ref=e76]: Python basics for ML
+            - generic [ref=e77]:
+              - 'heading "Module 2: Supervised Learning" [level=4] [ref=e78]'
+              - list [ref=e79]:
+                - listitem [ref=e80]:
+                  - generic [ref=e81]: ✓
+                  - generic [ref=e82]: Linear Regression
+                - listitem [ref=e83]:
+                  - generic [ref=e84]: ✓
+                  - generic [ref=e85]: Logistic Regression
+                - listitem [ref=e86]:
+                  - generic [ref=e87]: ✓
+                  - generic [ref=e88]: Decision Trees
+                - listitem [ref=e89]:
+                  - generic [ref=e90]: ✓
+                  - generic [ref=e91]: Model Evaluation
+            - generic [ref=e92]:
+              - 'heading "Module 3: Unsupervised Learning" [level=4] [ref=e93]'
+              - list [ref=e94]:
+                - listitem [ref=e95]:
+                  - generic [ref=e96]: ✓
+                  - generic [ref=e97]: Clustering Algorithms
+                - listitem [ref=e98]:
+                  - generic [ref=e99]: ✓
+                  - generic [ref=e100]: K-Means Clustering
+                - listitem [ref=e101]:
+                  - generic [ref=e102]: ✓
+                  - generic [ref=e103]: Principal Component Analysis
+                - listitem [ref=e104]:
+                  - generic [ref=e105]: ✓
+                  - generic [ref=e106]: Dimensionality Reduction
+            - generic [ref=e107]:
+              - 'heading "Module 4: Neural Networks Basics" [level=4] [ref=e108]'
+              - list [ref=e109]:
+                - listitem [ref=e110]:
+                  - generic [ref=e111]: ✓
+                  - generic [ref=e112]: Introduction to Neural Networks
+                - listitem [ref=e113]:
+                  - generic [ref=e114]: ✓
+                  - generic [ref=e115]: Backpropagation
+                - listitem [ref=e116]:
+                  - generic [ref=e117]: ✓
+                  - generic [ref=e118]: Activation Functions
+                - listitem [ref=e119]:
+                  - generic [ref=e120]: ✓
+                  - generic [ref=e121]: Building your first neural network
+            - generic [ref=e122]:
+              - 'heading "Module 5: Practical Applications" [level=4] [ref=e123]'
+              - list [ref=e124]:
+                - listitem [ref=e125]:
+                  - generic [ref=e126]: ✓
+                  - generic [ref=e127]: Image Classification
+                - listitem [ref=e128]:
+                  - generic [ref=e129]: ✓
+                  - generic [ref=e130]: Text Analysis
+                - listitem [ref=e131]:
+                  - generic [ref=e132]: ✓
+                  - generic [ref=e133]: Recommendation Systems
+                - listitem [ref=e134]:
+                  - generic [ref=e135]: ✓
+                  - generic [ref=e136]: Real-world Projects
+            - generic [ref=e137]:
+              - 'heading "Module 6: Best Practices and Next Steps" [level=4] [ref=e138]'
+              - list [ref=e139]:
+                - listitem [ref=e140]:
+                  - generic [ref=e141]: ✓
+                  - generic [ref=e142]: Model Optimization
+                - listitem [ref=e143]:
+                  - generic [ref=e144]: ✓
+                  - generic [ref=e145]: Hyperparameter Tuning
+                - listitem [ref=e146]:
+                  - generic [ref=e147]: ✓
+                  - generic [ref=e148]: Production Deployment
+                - listitem [ref=e149]:
+                  - generic [ref=e150]: ✓
+                  - generic [ref=e151]: Advanced Topics
+          - generic [ref=e152]:
+            - button "Start Learning" [ref=e153]
+            - button "Download PDF" [ref=e154]
+  - button "Open Next.js Dev Tools" [ref=e160] [cursor=pointer]:
+    - img [ref=e161]
+  - alert [ref=e164]
+```

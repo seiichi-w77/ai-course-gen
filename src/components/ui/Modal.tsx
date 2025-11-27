@@ -58,6 +58,74 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
   ) => {
     const internalRef = useRef<HTMLDivElement>(null);
     const modalRef = (ref as React.RefObject<HTMLDivElement>) || internalRef;
+    const previousActiveElement = useRef<HTMLElement | null>(null);
+
+    // Focus trap implementation
+    useEffect(() => {
+      if (!isOpen) return;
+
+      // Store the previously focused element
+      previousActiveElement.current = document.activeElement as HTMLElement;
+
+      // Get focusable elements
+      const getFocusableElements = () => {
+        if (!modalRef.current) return [];
+        return Array.from(
+          modalRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => !el.hasAttribute('disabled') && el.tabIndex !== -1);
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose();
+          return;
+        }
+
+        if (e.key === 'Tab') {
+          const focusableElements = getFocusableElements();
+          if (focusableElements.length === 0) return;
+
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey) {
+            // Shift + Tab
+            if (document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            // Tab
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        }
+      };
+
+      // Focus first focusable element or modal container
+      setTimeout(() => {
+        const focusableElements = getFocusableElements();
+        if (focusableElements.length > 0) {
+          focusableElements[0].focus();
+        } else if (modalRef.current) {
+          modalRef.current.focus();
+        }
+      }, 100);
+
+      document.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        // Restore focus to previously focused element
+        if (previousActiveElement.current) {
+          previousActiveElement.current.focus();
+        }
+      };
+    }, [isOpen, onClose, modalRef]);
 
     useEffect(() => {
       if (isOpen) {
@@ -89,6 +157,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
+              aria-hidden="true"
             />
 
             {/* Modal */}
@@ -102,6 +171,11 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={title ? 'modal-title' : undefined}
+              aria-describedby={description ? 'modal-description' : undefined}
+              tabIndex={-1}
             >
               <div
                 className={cn(
@@ -117,12 +191,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
                 <div className="flex items-start justify-between p-6 border-b border-[var(--border)]">
                   <div className="flex-1">
                     {title && (
-                      <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                      <h2 id="modal-title" className="text-xl font-semibold text-[var(--foreground)]">
                         {title}
                       </h2>
                     )}
                     {description && (
-                      <p className="mt-1 text-sm text-[var(--color-gray-500)]">
+                      <p id="modal-description" className="mt-1 text-sm text-[var(--color-gray-500)]">
                         {description}
                       </p>
                     )}

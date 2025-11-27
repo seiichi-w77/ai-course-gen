@@ -6,11 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
+    "@google-cloud/text-to-speech": "^6.4.0",
     "clsx": "^2.1.1",
+    "firebase": "^12.6.0",
     "framer-motion": "^12.23.24",
     "next": "16.0.5",
     "react": "19.2.0",
@@ -18,14 +24,25 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.0",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/coverage-v8": "^4.0.14",
+    "axe-core": "^4.11.0",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
+    "jest-axe": "^10.0.0",
+    "jsdom": "^27.2.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.14"
   }
 }
